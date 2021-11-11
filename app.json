@@ -1,0 +1,12 @@
+{
+  "name": "oss-mobile",
+  "displayName": "oss-mobile",
+  "expo": {
+    "name": "oss-mobile",
+    "slug": "oss-mobile",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
