@@ -9,7 +9,6 @@
         "ok": "OK",
         "disconnect": "Disconnect",
         "connection": "Connection",
-        "sensor-select": "Do you want to connect to that sensor?",
         "connection-success" : "Connection success",
         "disconnect-success" : "Disconnected",
         "connection-fail" : "Connection failed",
@@ -32,7 +31,10 @@
         "abnormal-connection": "[Warning]: Abnormal connection",
         "not-fastened": "Not Fastened",
         "unknown" : "unknown",
-        "foreign-object " : "[Warning]:Foreign object"
+        "foreign-object " : "[Warning]:Foreign object",
+        "select": "Do you want to connect to that sensor?",
+        "duplicate": "The sensor is already registered",
+        "scan": "Do you want to scan"
     },
     "qr": {
         "subscription": "If you fit the QR code and barcode within the guide line, it will be automatically recognized.",
