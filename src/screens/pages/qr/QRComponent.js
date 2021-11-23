@@ -67,13 +67,15 @@ const QRComponent = () => {
                 style: 'cancel',
                 onPress: () => {
                     setScanned(false)
+                    setScanList([])
                 },
             },
             {
                 text: i18nt('action.ok'),
                 onPress: () => {
                     try {
-                        dispatch(setUuid(value))
+                        setScanList(value)
+                        // dispatch(setUuid(value))
                         // navigation.goBack()
                     } catch (e) {
                         console.error('[ERROR]', e)
@@ -85,7 +87,6 @@ const QRComponent = () => {
 
     const handleBarCodeScanned = (props, gallery) => {
         const { data, cornerPoints } = props
-        console.log('test', data)
         if (!gallery && !isScanArea(cornerPoints)) {
             return
         }
@@ -96,13 +97,7 @@ const QRComponent = () => {
                 if (qrErrorCheck(parsingData)) {
                     throw new Error('QR Code not recognized.')
                 }
-                const newValue = scanList
-                const newValue2 = newValue.push(parsingData)
-                console.log('newValue2', newValue2)
-
-                setScanList(newValue2)
-
-                // onConfirmSensor(parsingData)
+                onConfirmSensor(scanList.concat(parsingData))
             } catch (e) {
                 WarnAlert({
                     message: i18nt('error.qr-recognize'),
@@ -113,6 +108,13 @@ const QRComponent = () => {
         }
     }
     console.log(scanList, 'scanList@@@@@@@')
+    const styles = StyleSheet.create({
+        cameraContainer: {
+            marginHorizontal: 0, marginLeft: 0, marginStart: 0,
+            paddingHorizontal: 0, paddingLeft: 0, paddingStart: 0,
+            height: '110%%',
+        }
+    });
     return (
         <SMainTabContainerView>
             <SafeAreaView
@@ -123,10 +125,10 @@ const QRComponent = () => {
             >
                 <SQRView>
                     <BarCodeScanner
-                        onBarCodeScanned={(v) => {
-                            console.log('onBarCodeScanned', v)
-                        }}
-                        style={StyleSheet.absoluteFillObject}
+                        onBarCodeScanned={
+                            scanned ? undefined : handleBarCodeScanned
+                        }
+                        style={[StyleSheet.absoluteFillObject, styles]}
                     />
                     <SGuidLineWrapperView
                         onLayout={(event) => {
