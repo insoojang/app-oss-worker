@@ -1,8 +1,6 @@
 import React from 'react'
-import { SafeAreaView, ScrollView, TouchableOpacity } from 'react-native'
+import { SafeAreaView } from 'react-native'
 import { SMainTabContainerView } from './TabStyle'
-import { colorSet } from '../../styles/colors'
-import { responsiveHeight } from 'react-native-responsive-dimensions'
 import { Main } from '../pages/main'
 
 const MainTab = () => {
