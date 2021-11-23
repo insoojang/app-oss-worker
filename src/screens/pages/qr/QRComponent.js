@@ -1,5 +1,11 @@
-import React, { useRef, useState } from 'react'
-import { View, SafeAreaView, Alert, StyleSheet } from 'react-native'
+import React, { useRef, useState, useEffect } from 'react'
+import {
+    Alert,
+    SafeAreaView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from 'react-native'
 import { isEmpty } from 'lodash-es'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { useNavigation } from '@react-navigation/native'
@@ -8,22 +14,27 @@ import {
     responsiveScreenHeight,
     responsiveScreenWidth,
 } from 'react-native-responsive-dimensions'
+import Spinner from 'react-native-loading-spinner-overlay'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import {
     SGuidLineWrapperView,
     SQRSubscription,
     SQRView,
+    SScanListChip,
+    SScanListChipView,
 } from './QRComponentStyle'
 import { i18nt } from '../../../utils/i18n'
 import { WarnAlert } from '../../../components/Alerts'
 import { jsonParser } from '../../../utils/parser'
 import { qrErrorCheck } from '../../../utils/common'
 import { SMainTabContainerView } from '../../tabs/TabStyle'
-import { setUuid } from '../../../redux/reducers'
 
 const QRComponent = () => {
     const [scanned, setScanned] = useState(false)
     const [scanList, setScanList] = useState([])
+    const [loading, setLoading] = useState(false)
+
     const guidLineLayout = useRef({})
     const navigation = useNavigation()
     const dispatch = useDispatch()
@@ -61,20 +72,40 @@ const QRComponent = () => {
     }
 
     const onConfirmSensor = (value) => {
-        Alert.alert(i18nt('action.sensor-select'), '', [
+        Alert.alert(i18nt('sensor.scan'), '', [
             {
                 text: i18nt('action.cancel'),
                 style: 'cancel',
                 onPress: () => {
                     setScanned(false)
-                    setScanList([])
                 },
             },
             {
                 text: i18nt('action.ok'),
                 onPress: () => {
                     try {
-                        setScanList(value)
+                        setLoading(true)
+                        let duplicateCheck = scanList.some(
+                            (v) => v.android === value.android,
+                        )
+                        if (duplicateCheck) {
+                            setLoading(false)
+                            WarnAlert({
+                                message: i18nt('sensor.duplicate'),
+                                onPress: () => {
+                                    setTimeout(() => {
+                                        setScanned(false)
+                                    }, 2500)
+                                },
+                            })
+                        } else {
+                            setScanList(scanList.concat(value))
+                            setTimeout(() => {
+                                setLoading(false)
+                                setScanned(false)
+                            }, 1500)
+                        }
+
                         // dispatch(setUuid(value))
                         // navigation.goBack()
                     } catch (e) {
@@ -97,26 +128,87 @@ const QRComponent = () => {
                 if (qrErrorCheck(parsingData)) {
                     throw new Error('QR Code not recognized.')
                 }
-                onConfirmSensor(scanList.concat(parsingData))
+                onConfirmSensor(parsingData)
             } catch (e) {
                 WarnAlert({
                     message: i18nt('error.qr-recognize'),
                     error: e,
-                    state: setScanned,
+                    onPress: () => {
+                        setScanned(false)
+                    },
                 })
             }
         }
     }
-    console.log(scanList, 'scanList@@@@@@@')
+
     const styles = StyleSheet.create({
         cameraContainer: {
-            marginHorizontal: 0, marginLeft: 0, marginStart: 0,
-            paddingHorizontal: 0, paddingLeft: 0, paddingStart: 0,
+            marginHorizontal: 0,
+            marginLeft: 0,
+            marginStart: 0,
+            paddingHorizontal: 0,
+            paddingLeft: 0,
+            paddingStart: 0,
             height: '110%%',
-        }
-    });
+        },
+    })
+
+    useEffect(() => {
+        navigation.setOptions({
+            // headerLeft: null,
+            headerRight: () => (
+                <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                    style={{ marginHorizontal: 15 }}
+                    hitSlop={{
+                        top: 10,
+                        right: 15,
+                        bottom: 10,
+                        left: 15,
+                    }}
+                >
+                    <Icon name="close" />
+                </TouchableOpacity>
+            ),
+        })
+    }, [])
+
+    const chipRender = (list) => {
+        const { android } = list
+        const title = android?.split(':').slice(-2).join('').toLowerCase()
+        return (
+            <SScanListChip
+                title={title}
+                key={android}
+                icon={
+                    <TouchableOpacity
+                        hitSlop={{
+                            top: 32,
+                            bottom: 32,
+                            left: 32,
+                            right: 32,
+                        }}
+                        onPress={() => {
+                            const filterList = scanList?.filter(
+                                (list) => list.android !== android,
+                            )
+                            setScanList(filterList)
+                        }}
+                    >
+                        <Icon name="close-thick" size={15} color="white" />
+                    </TouchableOpacity>
+                }
+                iconRight
+            />
+        )
+    }
     return (
         <SMainTabContainerView>
+            <Spinner
+                visible={loading}
+                overlayColor={'rgba(0, 0, 0, 0.7)'}
+                textStyle={{ color: 'white' }}
+            />
             <SafeAreaView
                 style={{
                     flex: 1,
@@ -148,6 +240,11 @@ const QRComponent = () => {
                     <SQRSubscription>
                         {i18nt('qr.subscription')}
                     </SQRSubscription>
+                    <SScanListChipView>
+                        {scanList.map((list) => {
+                            return chipRender(list)
+                        })}
+                    </SScanListChipView>
                 </SQRView>
             </SafeAreaView>
         </SMainTabContainerView>

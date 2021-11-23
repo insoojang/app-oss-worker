@@ -5,6 +5,7 @@ import {
 } from 'react-native-responsive-dimensions'
 import { fontSizeSet } from '../../../styles/size'
 import { colorSet } from '../../../styles/colors'
+import { Chip } from 'react-native-elements'
 
 export const SQRView = styled.View`
     flex: 1;
@@ -30,6 +31,20 @@ SQRSubscription.displayName = 'SQRSubscription'
 
 export const SGuidLineWrapperView = styled.View`
     margin-bottom: 25px;
-    margin-top: 200px;
+    margin-top: 150px;
 `
 SGuidLineWrapperView.displayname = 'SGuidLineWrapperView'
+
+export const SScanListChipView = styled.View`
+    margin-top: 30px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex: 1;
+    justify-content: space-around;
+`
+SScanListChipView.displayname = 'SScanListChipView'
+
+export const SScanListChip = styled(Chip)`
+    margin-right: 15px;
+`
+SScanListChip.displayname = 'SScanListChip'

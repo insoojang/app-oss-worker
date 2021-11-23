@@ -15,12 +15,15 @@ import BleManager from 'react-native-ble-manager'
 import { permissionsAndroid } from '../../../utils/permissions'
 import { SCREEN } from '../../../navigation/constants'
 import { WarnAlert } from '../../../components/Alerts'
+import Spinner from 'react-native-loading-spinner-overlay'
 
 const BleManagerModule = NativeModules.BleManager
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule)
 
 const Main = () => {
     const [bluetoothState, setBluetoothState] = useState(null)
+    const [loading, setLoading] = useState(false)
+
     const navigation = useNavigation()
 
     const buttonGroupList = [
@@ -44,7 +47,6 @@ const Main = () => {
     ]
     const getCameraPermission = async () => {
         const { status } = await Camera.requestPermissionsAsync()
-        console.log('test', status)
         if (status === 'granted') {
             navigation.navigate(SCREEN.Scan)
         } else {
@@ -77,6 +79,11 @@ const Main = () => {
     }, [bluetoothState])
     return (
         <>
+            <Spinner
+                visible={loading}
+                overlayColor={'rgba(0, 0, 0, 0.7)'}
+                textStyle={{ color: 'white' }}
+            />
             <SButtongroupContainerView>
                 <ButtonGroup groupList={buttonGroupList} />
             </SButtongroupContainerView>

@@ -38,13 +38,13 @@ const MainNavigation = () => {
 
     return (
         <MainStack.Navigator>
-            <MainStack.Screen
-                name={SCREEN.LoginTab}
-                component={LoginTab}
-                options={{
-                    headerShown: false,
-                }}
-            />
+            {/*<MainStack.Screen*/}
+            {/*    name={SCREEN.LoginTab}*/}
+            {/*    component={LoginTab}*/}
+            {/*    options={{*/}
+            {/*        headerShown: false,*/}
+            {/*    }}*/}
+            {/*/>*/}
             <MainStack.Screen
                 name={SCREEN.MainTab}
                 component={MainTab}
@@ -125,8 +125,18 @@ const BottomTabNavigation = () => {
                 component={QRComponent}
                 options={{
                     animationEnabled: false,
-                    headerShown: false,
-                    tabBarLabelStyle: { fontSize: 11 },
+                    tabBarLabelStyle: {
+                        fontSize: 11,
+                    },
+                    headerBackTitleVisible: false,
+                    headerTitleAlign: 'center',
+                    headerStyle: {
+                        shadowColor: 'transparent',
+                        shadowOpacity: 0,
+                        elevation: 0,
+                        borderBottomWidth: 1,
+                        borderBottomColor: colorSet.borderColor,
+                    },
                     tabBarIcon: () => <Icon name="qrcode-scan" size={20} />,
                 }}
             />
@@ -135,8 +145,18 @@ const BottomTabNavigation = () => {
                 component={NFCComponent}
                 options={{
                     animationEnabled: false,
-                    headerShown: false,
-                    tabBarLabelStyle: { fontSize: 11 },
+                    tabBarLabelStyle: {
+                        fontSize: 11,
+                    },
+                    headerBackTitleVisible: false,
+                    headerTitleAlign: 'center',
+                    headerStyle: {
+                        shadowColor: 'transparent',
+                        shadowOpacity: 0,
+                        elevation: 0,
+                        borderBottomWidth: 1,
+                        borderBottomColor: colorSet.borderColor,
+                    },
                     tabBarIcon: () => <Icon name="cellphone-nfc" size={20} />,
                 }}
             />
@@ -182,25 +202,26 @@ const RootNavigation = () => {
                         animationEnabled: false,
                         headerBackTitleVisible: false,
                         headerTitleAlign: 'center',
-                        headerLeft: null,
-                        headerRight: () => (
-                            <TouchableOpacity
-                                onPress={() => route.navigation.goBack()}
-                                style={{ marginHorizontal: 15 }}
-                                hitSlop={{
-                                    top: 10,
-                                    right: 15,
-                                    bottom: 10,
-                                    left: 15,
-                                }}
-                            >
-                                <Icon
-                                    name="close"
-                                    size={20}
-                                    style={{ marginHorizontal: 15 }}
-                                />
-                            </TouchableOpacity>
-                        ),
+                        headerShown: false,
+                        // headerLeft: null,
+                        // headerRight: () => (
+                        //     <TouchableOpacity
+                        //         onPress={() => route.navigation.goBack()}
+                        //         style={{ marginHorizontal: 15 }}
+                        //         hitSlop={{
+                        //             top: 10,
+                        //             right: 15,
+                        //             bottom: 10,
+                        //             left: 15,
+                        //         }}
+                        //     >
+                        //         <Icon
+                        //             name="close"
+                        //             size={20}
+                        //             style={{ marginHorizontal: 15 }}
+                        //         />
+                        //     </TouchableOpacity>
+                        // ),
                         headerStyle: {
                             shadowColor: 'transparent',
                             shadowOpacity: 0,
