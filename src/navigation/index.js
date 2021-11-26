@@ -13,6 +13,7 @@ import { colorSet } from '../styles/colors'
 import { LoginTab, MainTab, MoreTab, MyInfoTab } from '../screens/tabs'
 import QRComponent from '../screens/pages/qr/QRComponent'
 import { NFCComponent } from '../screens/pages/nfc'
+import ScanComponent from '../screens/pages/more/ScanComponent'
 
 const BottomTabStack = createBottomTabNavigator()
 const MainStack = createStackNavigator()
@@ -29,7 +30,7 @@ const MainNavigation = () => {
                 navigation.replace(SCREEN.MainTab)
             }
         } catch (e) {
-            console.log('[ERROR]: MyInfo.js > getData()')
+            console.log('[ERROR]: getUserLoginData')
         }
     }
     useEffect(() => {
@@ -230,6 +231,15 @@ const RootNavigation = () => {
                             borderBottomColor: colorSet.borderColor,
                         },
                     }
+                }}
+            />
+            <RootStack.Screen
+                name={SCREEN.BleScan}
+                component={ScanComponent}
+                options={{
+                    // animationEnabled: false,
+                    headerTintColor: colorSet.normalTextColor,
+                    headerBackTitleVisible: false,
                 }}
             />
         </RootStack.Navigator>

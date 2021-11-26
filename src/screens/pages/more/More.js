@@ -49,7 +49,7 @@ const More = () => {
             const response = jsonValue !== {} ? JSON.parse(jsonValue) : {}
             setUserData(response)
         } catch (e) {
-            console.log('[ERROR]: MyInfo.js > getData()')
+            console.log('[ERROR]: More.js > getData()')
         }
     }
     useLayoutEffect(() => {
