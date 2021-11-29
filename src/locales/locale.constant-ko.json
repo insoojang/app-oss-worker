@@ -8,7 +8,8 @@
         "cancel": "취소",
         "ok": "확인",
         "disconnect": "센서 해제",
-        "connection": "센서 연결",
+        "connection": "연결",
+        "sensor-connection": "센서 연결",
         "connection-success" : "연결 성공",
         "disconnect-success" : "연결 해제됨",
         "connection-fail" : "연결 실패",
@@ -27,14 +28,16 @@
     "sensor": {
         "on": "연결됨",
         "off": "연결 안됨",
+        "connecting": "연결 중",
         "normal-connection": "안전 체결",
-        "abnormal-connection": "[경고]:역방향 체결",
+        "abnormal-connection": "역방향 체결",
         "not-fastened": "체결 안됨",
         "unknown" : "알수없음",
         "foreign-object" : "[경고]:이물질",
         "select": "센서를 연결 하시겠습니까?",
         "duplicate": "이미 등록된 센서입니다",
-        "scan": "센서를 스캔 하시겠습니까?"
+        "scan": "센서를 스캔 하시겠습니까?",
+        "error": "연결 실패"
     },
     "qr": {
         "subscription": "안내선 안에 QR 코드 및 바코드를 맞추면 자동으로 인식됩니다.",
@@ -55,7 +58,9 @@
         "firmware-version": "펌웨어 버전정보를 가져올 수 없습니다.",
         "sensor-error-404": "센서 Properties에 Notify 값이 없습니다.",
         "sensor-error-500": "센서 Characteristics 값이 없습니다.",
-        "sensor-error-408" : "센서 연결 시간초과"
+        "sensor-error-408" : "센서 연결 시간초과",
+        "store-sensor": "센서 저장에 실패하였습니다.",
+        "unknown" : "알수없는 에러가 발생했습니다."
     },
     "title": {
         "qr": "QR/바코드",
@@ -71,7 +76,8 @@
         "name" : "이름",
         "phone" : "전화번호",
         "date-of-birth" : "생년월일",
-        "scan" : "스캔하기"
+        "scan" : "스캔하기",
+        "ble-scan" : "블루투스 스캔"
     },
     "login": {
         "header": "작업자 입력",

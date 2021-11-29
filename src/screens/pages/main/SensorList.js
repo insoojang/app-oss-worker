@@ -11,8 +11,10 @@ import Empty from '../../../components/Empty'
 import { fontSizeSet } from '../../../styles/size'
 import { colorSet } from '../../../styles/colors'
 import StateBar from '../../../components/StateBar'
-import { fastenedMessage, typeOfFastened } from '../../../utils/common'
+import { sensorStatusTitle, typeOfFastened } from '../../../utils/common'
 import { times } from '../../../utils/format'
+import { sensorTitleParser } from '../../../utils/parser'
+import { isEmpty } from 'lodash-es'
 
 const SensorList = ({ list }) => {
     const [listOpen, setListOpen] = useState(false)
@@ -57,14 +59,16 @@ const SensorList = ({ list }) => {
             color: colorSet.disableText,
         },
     }
+
+    useEffect(() => {}, [])
     const renderItem = ({ item, index }) => {
         return (
             <ListItem
                 topDivider
                 key={index}
-                onPress={() => {
-                    updateList(item)
-                }}
+                // onPress={() => {
+                //     updateList(item)
+                // }}
                 containerStyle={{
                     backgroundColor: item.check ? '#f9f9f9' : '#fff',
                     borderColor:
@@ -73,12 +77,12 @@ const SensorList = ({ list }) => {
                 }}
             >
                 <StateBar
-                    title={fastenedMessage(item.fastened)}
-                    innerStyle={typeOfFastened(item.fastened)}
+                    title={sensorStatusTitle(item.status)}
+                    innerStyle={typeOfFastened(item.status)}
                 />
                 <ListItem.Content>
                     <ListItem.Title style={listStyle.title}>
-                        {item.name}
+                        {item?.android && sensorTitleParser(item.android)}
                     </ListItem.Title>
                     <ListItem.Subtitle style={listStyle.subTitle}>
                         {times.getDefaultFormat()}
@@ -87,15 +91,17 @@ const SensorList = ({ list }) => {
             </ListItem>
         )
     }
+
     return (
         <View>
             <SSensorListTitleContainerView>
                 <SSensorListTitleView>
                     {i18nt('title.sensor-list')}
                 </SSensorListTitleView>
+                <Text>{listState.length}</Text>
             </SSensorListTitleContainerView>
             <SSensorListView>
-                {list.length === 0 ? (
+                {isEmpty(list) || list.length === 0 ? (
                     <Empty
                         description={i18nt('alarm.no-sensor')}
                         {...listEmptyStyle}

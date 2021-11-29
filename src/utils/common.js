@@ -26,7 +26,7 @@ export const qrErrorCheck = (value) => {
     }
 }
 
-export const fastenedMessage = (value) => {
+export const sensorStatusTitle = (value) => {
     if (typeof value !== 'string') {
         return i18nt('sensor.unknown')
     }
@@ -43,6 +43,10 @@ export const fastenedMessage = (value) => {
             return i18nt('sensor.not-fastened')
         case value === '3':
             return i18nt('sensor.foreign-object')
+        case value === 'scan':
+            return i18nt('sensor.connecting')
+        case value === 'error':
+            return i18nt('sensor.connecting')
         default:
             return i18nt('sensor.unknown')
     }

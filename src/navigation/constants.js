@@ -9,4 +9,5 @@ export const SCREEN = {
     Scan: i18nt('title.scan'),
     Main: i18nt('title.main'),
     MyInfoTab: i18nt('title.my-info'),
+    BleScan: i18nt('title.ble-scan'),
 }
