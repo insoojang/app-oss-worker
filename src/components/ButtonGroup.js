@@ -18,6 +18,7 @@ const ButtonGroup = (props) => {
             {groupList.map((data, index) => {
                 return (
                     <TouchableOpacity
+                        disabled={data?.disabled}
                         style={{
                             alignItems: 'center',
                             width: wrapperWidth / buttonNum,
@@ -38,10 +39,22 @@ const ButtonGroup = (props) => {
                             name={data?.icon}
                             size={27}
                             style={{ marginBottom: 3 }}
-                            color="white"
+                            color={
+                                data?.disabled
+                                    ? colorSet.exampleText
+                                    : colorSet.white
+                            }
                         />
                         <STextView>
-                            <STitleText>{data?.title}</STitleText>
+                            <STitleText
+                                style={{
+                                    color: data?.disabled
+                                        ? colorSet.exampleText
+                                        : colorSet.white,
+                                }}
+                            >
+                                {data?.title}
+                            </STitleText>
                         </STextView>
                     </TouchableOpacity>
                 )

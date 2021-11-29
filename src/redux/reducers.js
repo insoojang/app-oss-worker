@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit'
-import update from 'immutability-helper'
 
 // const QR_STATE = {
 //     android: '',
@@ -7,30 +6,6 @@ import update from 'immutability-helper'
 //     server: '',
 // }
 const SENSOR_LIST = []
-const initialState = {
-    websockets: {
-        measurement: {
-            isOpened: false,
-            readyState: 0,
-            timestamp: 0,
-            subscribers: {},
-        },
-        realtime: {
-            isOpened: false,
-            readyState: 0,
-            timestamp: 0,
-            subscribers: {},
-        },
-    },
-    subscriptions: {
-        measurement: {
-            metricData: {},
-        },
-        realtime: {
-            realtimeData: {},
-        },
-    },
-}
 
 export const sensorListSlice = createSlice({
     name: 'list',
@@ -71,41 +46,9 @@ export const scanListSlice = createSlice({
     },
 })
 
-export const realtimeSlice = createSlice({
-    name: 'list',
-    initialState: initialState,
-    reducers: {
-        setRealtimeAction: (state, action) => {
-            const { type, readyState, timestamp } = action.payload.event
-            const { subscribers } = state.websockets[type]
-            let subscription = {
-                [type]: {
-                    metricData: {},
-                },
-            }
-            return update(state, {
-                websockets: {
-                    $merge: {
-                        [type]: {
-                            readyState,
-                            timestamp,
-                            subscribers,
-                        },
-                    },
-                },
-                subscriptions: {
-                    $merge: subscription,
-                },
-            })
-        },
-        clearRealtimeAction: () => initialState,
-    },
-})
 export const { setListAction, clearListAction } = sensorListSlice.actions
 export const { setScanListAction, clearScanListAction } = scanListSlice.actions
-export const { setRealtimeAction, clearRealtimeAction } = scanListSlice.actions
 export const sensorListReducer = sensorListSlice.reducer
 export const scanListReducer = scanListSlice.reducer
-export const realtimeReducer = realtimeSlice.reducer
 
-export default { sensorListReducer, scanListReducer, realtimeReducer }
+export default { sensorListReducer, scanListReducer }

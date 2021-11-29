@@ -15,21 +15,6 @@ export const launchFunction = async (promise) => {
     return Promise.race([promise(), timeout])
 }
 
-export const fetchBluetoothData = ({ server, resourceKey, param }) => {
-    saveBluetooteData({
-        url: server,
-        resourceKey,
-        param,
-    })
-        .then(() => {
-            console.log('service Success')
-        })
-        .catch((e) => {
-            onAllClear()
-            console.error(e)
-        })
-}
-
 export const delayFunction = async () => {
     let closeTimerId = null
 
