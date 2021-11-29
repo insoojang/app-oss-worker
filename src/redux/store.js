@@ -1,11 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 // import logger from 'redux-logger'
-import qrSlice from './reducers'
+import { sensorListReducer, scanListReducer } from './reducers'
 
 export default configureStore({
     reducer: {
-        qr: qrSlice,
+        storeSensorList: sensorListReducer,
+        storeScanList: scanListReducer,
+        storeReatimeList: realtimeReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 })
-

@@ -27,6 +27,11 @@ const More = () => {
             icon: 'cellphone',
             content: Constants.manifest.version,
         },
+        {
+            title: i18nt('title.ble-scan'),
+            icon: 'bluetooth-connect',
+            screen: SCREEN.BleScan,
+        },
     ]
     const Logout = async () => {
         try {

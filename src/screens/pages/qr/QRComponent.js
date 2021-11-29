@@ -3,13 +3,15 @@ import {
     Alert,
     SafeAreaView,
     StyleSheet,
+    Text,
     TouchableOpacity,
     View,
+    Platform,
 } from 'react-native'
 import { isEmpty } from 'lodash-es'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { useNavigation } from '@react-navigation/native'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
     responsiveScreenHeight,
     responsiveScreenWidth,
@@ -26,14 +28,21 @@ import {
 } from './QRComponentStyle'
 import { i18nt } from '../../../utils/i18n'
 import { WarnAlert } from '../../../components/Alerts'
-import { jsonParser } from '../../../utils/parser'
+import { jsonParser, sensorTitleParser } from '../../../utils/parser'
 import { qrErrorCheck } from '../../../utils/common'
 import { SMainTabContainerView } from '../../tabs/TabStyle'
+import { SCREEN } from '../../../navigation/constants'
+import { colorSet } from '../../../styles/colors'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { setScanListAction } from '../../../redux/reducers'
 
 const QRComponent = () => {
     const [scanned, setScanned] = useState(false)
     const [scanList, setScanList] = useState([])
     const [loading, setLoading] = useState(false)
+    const [userData, setUserData] = useState({})
+
+    const { storeScanList } = useSelector((state) => state)
 
     const guidLineLayout = useRef({})
     const navigation = useNavigation()
@@ -88,7 +97,10 @@ const QRComponent = () => {
                         let duplicateCheck = scanList.some(
                             (v) => v.android === value.android,
                         )
-                        if (duplicateCheck) {
+                        let storeDuplicateCheck = storeScanList.some(
+                            (v) => v.android === value.android,
+                        )
+                        if (duplicateCheck || storeDuplicateCheck) {
                             setLoading(false)
                             WarnAlert({
                                 message: i18nt('sensor.duplicate'),
@@ -99,16 +111,30 @@ const QRComponent = () => {
                                 },
                             })
                         } else {
-                            setScanList(scanList.concat(value))
+                            const bleList = scanList.concat(value).map((list) =>
+                                Object.assign(list, {
+                                    //connection Status :  scan, start, end, error
+                                    status: 'scan',
+                                    uuid:
+                                        Platform.OS === 'android'
+                                            ? list.android
+                                            : list.ios,
+                                    ...userData,
+                                }),
+                            )
+                            setScanList(bleList)
                             setTimeout(() => {
                                 setLoading(false)
                                 setScanned(false)
                             }, 1500)
                         }
-
-                        // dispatch(setUuid(value))
-                        // navigation.goBack()
                     } catch (e) {
+                        setLoading(false)
+                        setScanned(false)
+                        WarnAlert({
+                            message: i18nt('sensor.unknown'),
+                            error: e,
+                        })
                         console.error('[ERROR]', e)
                     }
                 },
@@ -153,13 +179,25 @@ const QRComponent = () => {
         },
     })
 
+    const getUserLoginData = async () => {
+        try {
+            const jsonValue = await AsyncStorage.getItem('@userData')
+            const response = jsonValue !== {} ? JSON.parse(jsonValue) : {}
+            if (!isEmpty(response)) {
+                setUserData(response)
+            }
+        } catch (e) {
+            console.log('[ERROR]: QRComponent.js > getUserLoginData()')
+        }
+    }
+
     useEffect(() => {
+        getUserLoginData()
         navigation.setOptions({
-            // headerLeft: null,
-            headerRight: () => (
+            headerLeft: () => (
                 <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={{ marginHorizontal: 15 }}
+                    onPress={() => navigation.navigate(SCREEN.MainTab)}
+                    style={{ marginHorizontal: 10 }}
                     hitSlop={{
                         top: 10,
                         right: 15,
@@ -167,15 +205,60 @@ const QRComponent = () => {
                         left: 15,
                     }}
                 >
-                    <Icon name="close" />
+                    <Icon
+                        name="chevron-left"
+                        size={30}
+                        style={{ marginHorizontal: 5 }}
+                    />
+                </TouchableOpacity>
+            ),
+            headerRight: () => (
+                <TouchableOpacity
+                    onPress={() => {
+                        try {
+                            dispatch(setScanListAction(scanList))
+                            navigation.navigate(SCREEN.MainTab)
+                        } catch (e) {
+                            setScanList([])
+                            WarnAlert({
+                                message: i18nt('error.store-sensor'),
+                                error: e,
+                            })
+                            console.error('[ERROR]: set storeData')
+                        }
+                    }}
+                    style={{ marginHorizontal: 30 }}
+                    hitSlop={{
+                        top: 10,
+                        right: 15,
+                        bottom: 10,
+                        left: 15,
+                    }}
+                    disabled={scanList.length === 0}
+                >
+                    <Text
+                        style={{
+                            color:
+                                scanList.length === 0
+                                    ? colorSet.disableText
+                                    : colorSet.normalTextColor,
+                        }}
+                    >
+                        {i18nt('action.connection')}
+                    </Text>
                 </TouchableOpacity>
             ),
         })
-    }, [])
+
+        return () => {
+            // setScanList([])
+        }
+    }, [scanList])
 
     const chipRender = (list) => {
         const { android } = list
-        const title = android?.split(':').slice(-2).join('').toLowerCase()
+
+        const title = sensorTitleParser(android)
         return (
             <SScanListChip
                 title={title}
@@ -202,6 +285,7 @@ const QRComponent = () => {
             />
         )
     }
+
     return (
         <SMainTabContainerView>
             <Spinner
@@ -241,7 +325,7 @@ const QRComponent = () => {
                         {i18nt('qr.subscription')}
                     </SQRSubscription>
                     <SScanListChipView>
-                        {scanList.map((list) => {
+                        {scanList?.map((list) => {
                             return chipRender(list)
                         })}
                     </SScanListChipView>

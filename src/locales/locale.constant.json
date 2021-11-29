@@ -9,6 +9,7 @@
         "ok": "OK",
         "disconnect": "Disconnect",
         "connection": "Connection",
+        "sensor-connection": "Sensor Connection",
         "connection-success" : "Connection success",
         "disconnect-success" : "Disconnected",
         "connection-fail" : "Connection failed",
@@ -27,14 +28,16 @@
     "sensor": {
         "on": "connect",
         "off": "disconnect",
+        "connecting": "Connecting",
         "normal-connection": "Normal Connection",
         "abnormal-connection": "[Warning]: Abnormal connection",
         "not-fastened": "Not Fastened",
         "unknown" : "unknown",
-        "foreign-object " : "[Warning]:Foreign object",
+        "foreign-object " : "Foreign object",
         "select": "Do you want to connect to that sensor?",
         "duplicate": "The sensor is already registered",
-        "scan": "Do you want to scan"
+        "scan": "Do you want to scan",
+        "error": "Connection Failed"
     },
     "qr": {
         "subscription": "If you fit the QR code and barcode within the guide line, it will be automatically recognized.",
@@ -55,7 +58,9 @@
         "firmware-version": "Unable to get firmware version information.",
         "sensor-error-404": "No Notify value in sensor properties.",
         "sensor-error-500": "Sensor Characteristics values are missing.",
-        "sensor-error-408" : "Connection timeout"
+        "sensor-error-408" : "Connection timeout",
+        "store-sensor" : "Failed to save sensor.",
+        "unknown" : "Unknown error."
     },
     "title": {
         "qr": "QR/BarCode",
@@ -71,7 +76,8 @@
         "name" : "Name",
         "phone" : "PhoneNumber",
         "date-of-birth" : "Date of birth",
-        "scan" : "Scan"
+        "scan" : "Scan",
+        "ble-scan" : "bluetooth Scan"
     },
     "login": {
         "header": "Worker Input",
