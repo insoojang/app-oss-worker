@@ -46,7 +46,7 @@ export const sensorStatusTitle = (value) => {
         case value === 'scan':
             return i18nt('sensor.connecting')
         case value === 'error':
-            return i18nt('sensor.connecting')
+            return i18nt('sensor.error')
         default:
             return i18nt('sensor.unknown')
     }

@@ -6,7 +6,6 @@ export default configureStore({
     reducer: {
         storeSensorList: sensorListReducer,
         storeScanList: scanListReducer,
-        storeReatimeList: realtimeReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 })

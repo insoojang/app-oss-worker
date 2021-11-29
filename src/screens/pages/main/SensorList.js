@@ -15,10 +15,16 @@ import { sensorStatusTitle, typeOfFastened } from '../../../utils/common'
 import { times } from '../../../utils/format'
 import { sensorTitleParser } from '../../../utils/parser'
 import { isEmpty } from 'lodash-es'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { useSelector, useDispatch } from 'react-redux'
+import { setScanListAction } from '../../../redux/reducers'
 
-const SensorList = ({ list }) => {
+const SensorList = ({ list, deleteMode = false, setDeleteList }) => {
     const [listOpen, setListOpen] = useState(false)
     const [listState, setListState] = useState([])
+    const { storeScanList } = useSelector((state) => state)
+    const dispatch = useDispatch()
+
     const setListFunction = (value) => {
         setListState(value)
     }
@@ -60,15 +66,14 @@ const SensorList = ({ list }) => {
         },
     }
 
-    useEffect(() => {}, [])
     const renderItem = ({ item, index }) => {
         return (
             <ListItem
                 topDivider
                 key={index}
-                // onPress={() => {
-                //     updateList(item)
-                // }}
+                onPress={() => {
+                    updateList(item)
+                }}
                 containerStyle={{
                     backgroundColor: item.check ? '#f9f9f9' : '#fff',
                     borderColor:
@@ -88,6 +93,38 @@ const SensorList = ({ list }) => {
                         {times.getDefaultFormat()}
                     </ListItem.Subtitle>
                 </ListItem.Content>
+                {item?.status === 'error' || deleteMode ? (
+                    <TouchableOpacity
+                        onPress={() => {
+                            if (deleteMode) {
+                                const filterItem = storeScanList.filter(
+                                    (list) => list.uuid !== item.uuid,
+                                )
+                                dispatch(setScanListAction(filterItem))
+                                setDeleteList(item)
+                            } else {
+                                const filterItem = storeScanList.filter(
+                                    (list) => list.uuid !== item.uuid,
+                                )
+                                dispatch(setScanListAction(filterItem))
+                            }
+                        }}
+                        style={{ marginHorizontal: 15 }}
+                        hitSlop={{
+                            top: 10,
+                            right: 15,
+                            bottom: 10,
+                            left: 15,
+                        }}
+                    >
+                        <Icon
+                            name="minus-circle"
+                            color={'red'}
+                            size={30}
+                            style={{ marginHorizontal: 5 }}
+                        />
+                    </TouchableOpacity>
+                ) : null}
             </ListItem>
         )
     }

@@ -22,7 +22,6 @@ export const STextView = styled.View``
 STextView.displayName = 'STextView'
 
 export const STitleText = styled(Text)`
-    color: white;
     font-size: 18px;
 `
 STitleText.displayName = 'STitleText'
