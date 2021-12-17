@@ -10,7 +10,7 @@ const sensorDataParser = (value) => {
         proximity_sensor,
     } = value
     let sensorData = []
-    if (proximitySensor_l > 9000 && proximitySensor_c > 7000) {
+    if (proximity_sensor > 8000) {
         sensorData.push('1')
     } else {
         sensorData.push('0')
@@ -20,7 +20,7 @@ const sensorDataParser = (value) => {
 }
 const sensorTitleParser = (value) => {
     if (value !== null && value !== undefined && typeof value === 'string') {
-        return value?.split(':').slice(-2).join('').toLowerCase()
+        return value?.split(':').join('').toUpperCase()
     } else {
         const e = new Error('Value is Empty or not String ')
         e.name = 'sensorTitleParser error'

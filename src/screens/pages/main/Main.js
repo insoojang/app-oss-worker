@@ -7,7 +7,6 @@ import { debounce, isEmpty } from 'lodash-es'
 import { useDispatch, useSelector } from 'react-redux'
 import { Divider } from 'react-native-elements'
 import BleManager from 'react-native-ble-manager'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import ButtonGroup from '../../../components/ButtonGroup'
 import { i18nt } from '../../../utils/i18n'
@@ -22,6 +21,8 @@ import { launchFunction } from './func'
 import { checkNotifyProperties, isEmptyASCII } from '../../../utils/common'
 import { jsonParser, sensorDataParser } from '../../../utils/parser'
 import { saveBluetooteData } from '../../../service/api/bluetooth.service'
+import { times } from '../../../utils/format'
+import useInterval from '../../../utils/useInterval'
 
 const BleManagerModule = NativeModules.BleManager
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule)
@@ -39,6 +40,8 @@ const Main = (props) => {
     const { storeSensorList, storeScanList } = useSelector((state) => state)
     const dispatch = useDispatch()
     const sensorRef = useRef(null)
+    const bufferRef = useRef({})
+    const timerRef = useRef(null)
     const navigation = useNavigation()
     const buttonGroupList = [
         {
@@ -77,12 +80,47 @@ const Main = (props) => {
             setTimeoutCount(0)
         }
     }
+    const clearBluetoothDataTimer = () => {
+        if (timerRef?.current) {
+            clearInterval(timerRef.current)
+            timerRef.current = null
+        }
+    }
+
+    useInterval(() => {
+        console.log('buffer end ', bufferRef.current)
+        // if (!isEmpty(bufferRef.current)) {
+        setLocalSensorList(bufferRef.current)
+        // }
+    }, 5000)
+
+    useEffect(() => {
+        bleManagerEmitter.removeAllListeners(
+            'BleManagerDidUpdateValueForCharacteristic',
+        )
+        bleManagerEmitter.addListener(
+            'BleManagerDidUpdateValueForCharacteristic',
+            ({ value }) => {
+                const asciiCode = isEmptyASCII(value)
+
+                const result = JSON.stringify(String.fromCharCode(...asciiCode))
+
+                console.log(result, '@@@@')
+                const convertData = jsonParser(result)
+                const fastenedState = !isEmpty(result)
+                    ? sensorDataParser(convertData)
+                    : '-'
+
+                if (bufferRef.current[convertData.name]) {
+                    bufferRef.current[convertData.name].status = fastenedState
+                }
+            },
+        )
+    }, [])
 
     const onConnectAndPrepare = async (list) => {
         const { uuid, android, server } = list
         sensorRef.current = list
-        const jsonValue = await AsyncStorage.getItem('@userData')
-        const { name, phone } = jsonValue !== {} ? JSON.parse(jsonValue) : {}
 
         const clearConnect = await BleManager.isPeripheralConnected(uuid, [])
         if (clearConnect) {
@@ -110,74 +148,18 @@ const Main = (props) => {
                     characteristic,
                 )
 
-                bleManagerEmitter.addListener(
-                    'BleManagerDidUpdateValueForCharacteristic',
-                    ({ value }) => {
-                        const asciiCode = isEmptyASCII(value)
-
-                        const result = JSON.stringify(
-                            String.fromCharCode(...asciiCode),
-                        )
-                        // Convert bytes array to string
-                        //fastenedState :
-                        // 11 : normal connection
-                        // 10 : Abnormal connection
-                        // 01 : disConnected
-                        // 00 : disConnected
-                        const convertData = jsonParser(result)
-                        const fastenedState = !isEmpty(result)
-                            ? sensorDataParser(convertData)
-                            : '-'
-                        console.log(convertData, 'convertData')
-                        BleManager.write(
-                            uuid,
-                            writeProperties.service,
-                            writeProperties.characteristic,
-                            [104, 101, 97, 108, 116, 104],
-                        )
-                            .then(() => {
-                                // Success code
-                                console.log('WriteSuccess')
-                            })
-                            .catch((error) => {
-                                // Failure code
-                                console.log(error)
-                            })
-                        setLocalSensorList((state) =>
-                            state.reduce((acc, datum) => {
-                                if (datum.uuid === list.uuid) {
-                                    let newSensor = Object.assign({}, datum, {
-                                        status: fastenedState,
-                                    })
-                                    acc.push(newSensor)
-                                } else {
-                                    acc.push(datum)
-                                }
-                                return acc
-                            }, []),
-                        )
-                        const param = {
-                            empName: name,
-                            empPhone: phone,
-                            connected: true,
-                            fastened: fastenedState,
-                            battery: convertData?.battery,
-                            sensorType: convertData?.sensor_type,
-                            resourceKey: uuid,
-                        }
-                        saveBluetooteData({
-                            url: server,
-                            param,
-                        })
-                            .then(() => {
-                                console.log('service Success')
-                            })
-                            .catch((e) => {
-                                // debounceOnConnectClear(uuid)
-                                console.error('[SERVICE_ERROR] : ', e)
-                            })
-                    },
-                )
+                if (bufferRef.current[list.sensorName]) {
+                    bufferRef.current[list.sensorName] = Object.assign(
+                        {},
+                        list,
+                        { status: 'scan' },
+                    )
+                } else {
+                    const name = list.sensorName
+                    bufferRef.current = {
+                        [name]: Object.assign({}, list, { status: 'scan' }),
+                    }
+                }
             }
         }
         return list
@@ -231,21 +213,19 @@ const Main = (props) => {
                         // setLoading(false)
                     })
                     .catch((e) => {
-                        // const newList = sensorListRef.current
-                        setLocalSensorList((state) =>
-                            state.reduce((acc, datum) => {
-                                if (datum.uuid === list.uuid) {
-                                    let newSensor = Object.assign({}, datum, {
-                                        status: 'error',
-                                    })
-                                    acc.push(newSensor)
-                                } else {
-                                    acc.push(datum)
-                                }
-                                return acc
-                            }, []),
-                        )
                         console.error('[ERROR]', e)
+                        if (bufferRef.current[list.sensorName]) {
+                            bufferRef.current[
+                                list.sensorName
+                            ] = Object.assign({}, list, { status: 'error' })
+                        } else {
+                            const name = list.sensorName
+                            bufferRef.current = {
+                                [name]: Object.assign({}, list, {
+                                    status: 'error',
+                                }),
+                            }
+                        }
                         // sensorErrorAlert(e, timeoutCount, onTriplePress)
                         // onAllClear()
                     })
@@ -256,16 +236,17 @@ const Main = (props) => {
         BleManager.start({ showAlert: false })
         BleManager.checkState()
         bleManagerEmitter.addListener('BleManagerDisconnectPeripheral', () => {
-            console.log('disConnect', sensorRef.current)
-            if (sensorRef.current) {
-                disconnectError(sensorRef.current)
-            }
+            // console.log('disConnect', sensorRef.current)
+            // if (sensorRef.current) {
+            //     disconnectError(sensorRef.current)
+            // }
         })
         permissionsAndroid()
         return () => {
             // onAllClear()
         }
     }, [])
+
     useEffect(() => {
         bleManagerEmitter.addListener('BleManagerDidUpdateState', (args) => {
             if (args?.state !== bluetoothState) {
@@ -273,17 +254,20 @@ const Main = (props) => {
             }
         })
     }, [bluetoothState])
+
     const setList = (list) => {
         setLocalSensorList(list)
     }
+
     useEffect(() => {
         //TODO DFU
         // if (serverConnectionStatus) {
         //     fetchVersionData(server)
         // }
-        setList(storeScanList)
+        // setList(storeScanList)
         debounceOnConnectAndPrepare(storeScanList)
     }, [storeScanList])
+
     const disconnectError = (list) => {
         setLocalSensorList((state) =>
             state.reduce((acc, datum) => {
@@ -299,12 +283,14 @@ const Main = (props) => {
             }, []),
         )
     }
+
     useEffect(() => {
         if (!isEmpty(deleteList)) {
-            console.log('deleteList Start')
             debounceOnConnectClear(deleteList)
         }
     }, [deleteList])
+
+    console.log('sensor', localSensorList)
     return (
         <>
             {/*<Spinner*/}
@@ -321,7 +307,9 @@ const Main = (props) => {
                 ) : null}
                 <SSensorListContainerView>
                     <SensorList
-                        list={localSensorList}
+                        list={Object.keys(localSensorList).map(
+                            (list) => localSensorList[list],
+                        )}
                         deleteMode={deleteMode}
                         setDeleteList={setDeleteList}
                     />

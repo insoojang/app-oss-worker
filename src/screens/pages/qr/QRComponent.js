@@ -119,6 +119,7 @@ const QRComponent = () => {
                                         Platform.OS === 'android'
                                             ? list.android
                                             : list.ios,
+                                    sensorName: sensorTitleParser(list.android),
                                     ...userData,
                                 }),
                             )
@@ -182,9 +183,10 @@ const QRComponent = () => {
     const getUserLoginData = async () => {
         try {
             const jsonValue = await AsyncStorage.getItem('@userData')
-            const response = jsonValue !== {} ? JSON.parse(jsonValue) : {}
-            if (!isEmpty(response)) {
-                setUserData(response)
+            const { name, phone } =
+                jsonValue !== {} ? JSON.parse(jsonValue) : {}
+            if (!isEmpty(name)) {
+                setUserData({ userName: name, phone })
             }
         } catch (e) {
             console.log('[ERROR]: QRComponent.js > getUserLoginData()')
