@@ -19,7 +19,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useSelector, useDispatch } from 'react-redux'
 import { setScanListAction } from '../../../redux/reducers'
 
-const SensorList = ({ list, deleteMode = false, setDeleteList }) => {
+const SensorList = ({ list = [], deleteMode = false, setDeleteList, test }) => {
     const [listOpen, setListOpen] = useState(false)
     const [listState, setListState] = useState([])
     const { storeScanList } = useSelector((state) => state)
@@ -41,6 +41,7 @@ const SensorList = ({ list, deleteMode = false, setDeleteList }) => {
     }
     useEffect(() => {
         setListFunction(list)
+        console.log('snesorListTest@@@@@@@@@@', list)
     }, [list])
 
     const listEmptyStyle = {
@@ -87,7 +88,7 @@ const SensorList = ({ list, deleteMode = false, setDeleteList }) => {
                 />
                 <ListItem.Content>
                     <ListItem.Title style={listStyle.title}>
-                        {item?.android && sensorTitleParser(item.android)}
+                        {item?.sensorName}
                     </ListItem.Title>
                     <ListItem.Subtitle style={listStyle.subTitle}>
                         {times.getDefaultFormat()}
@@ -138,7 +139,7 @@ const SensorList = ({ list, deleteMode = false, setDeleteList }) => {
                 <Text>{listState.length}</Text>
             </SSensorListTitleContainerView>
             <SSensorListView>
-                {isEmpty(list) || list.length === 0 ? (
+                {isEmpty(listState) || listState.length === 0 ? (
                     <Empty
                         description={i18nt('alarm.no-sensor')}
                         {...listEmptyStyle}
