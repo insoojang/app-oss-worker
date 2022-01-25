@@ -41,7 +41,6 @@ const SensorList = ({ list = [], deleteMode = false, setDeleteList, test }) => {
     }
     useEffect(() => {
         setListFunction(list)
-        console.log('snesorListTest@@@@@@@@@@', list)
     }, [list])
 
     const listEmptyStyle = {
@@ -76,15 +75,15 @@ const SensorList = ({ list = [], deleteMode = false, setDeleteList, test }) => {
                     updateList(item)
                 }}
                 containerStyle={{
-                    backgroundColor: item.check ? '#f9f9f9' : '#fff',
+                    backgroundColor: item?.check ? '#f9f9f9' : '#fff',
                     borderColor:
                         index === 0 ? 'transparent' : colorSet.borderColor,
                     paddingHorizontal: 0,
                 }}
             >
                 <StateBar
-                    title={sensorStatusTitle(item.status)}
-                    innerStyle={typeOfFastened(item.status)}
+                    title={sensorStatusTitle(item?.status)}
+                    innerStyle={typeOfFastened(item?.status)}
                 />
                 <ListItem.Content>
                     <ListItem.Title style={listStyle.title}>
@@ -107,6 +106,7 @@ const SensorList = ({ list = [], deleteMode = false, setDeleteList, test }) => {
                                 const filterItem = storeScanList.filter(
                                     (list) => list.uuid !== item.uuid,
                                 )
+                                console.log('filterItem', filterItem)
                                 dispatch(setScanListAction(filterItem))
                             }
                         }}

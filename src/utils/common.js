@@ -27,7 +27,6 @@ export const qrErrorCheck = (value) => {
 }
 
 export const sensorStatusTitle = (value) => {
-    console.log('sensorStatusTitle@@', sensorStatusTitle)
     if (typeof value !== 'string') {
         return i18nt('sensor.unknown')
     }

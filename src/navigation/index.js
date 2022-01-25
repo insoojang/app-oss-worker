@@ -39,13 +39,13 @@ const MainNavigation = () => {
 
     return (
         <MainStack.Navigator>
-            <MainStack.Screen
-                name={SCREEN.LoginTab}
-                component={LoginTab}
-                options={{
-                    headerShown: false,
-                }}
-            />
+            {/*<MainStack.Screen*/}
+            {/*    name={SCREEN.LoginTab}*/}
+            {/*    component={LoginTab}*/}
+            {/*    options={{*/}
+            {/*        headerShown: false,*/}
+            {/*    }}*/}
+            {/*/>*/}
             <MainStack.Screen
                 name={SCREEN.MainTab}
                 component={MainTab}

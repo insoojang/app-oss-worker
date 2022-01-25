@@ -37,7 +37,7 @@ const Main = (props) => {
     const [deleteList, setDeleteList] = useState({})
     const [deleteMode, setDeleteMode] = useState(false)
 
-    const { storeSensorList, storeScanList } = useSelector((state) => state)
+    const { storeScanList } = useSelector((state) => state)
     const dispatch = useDispatch()
     const sensorRef = useRef(null)
     const bufferRef = useRef({})
@@ -88,9 +88,12 @@ const Main = (props) => {
     }
 
     useInterval(() => {
-        console.log('buffer end ', bufferRef.current)
         // if (!isEmpty(bufferRef.current)) {
-        setLocalSensorList(bufferRef.current)
+        setLocalSensorList((prev) =>
+            Object.keys(bufferRef.current).map(
+                (list) => bufferRef.current[list],
+            ),
+        )
         // }
     }, 5000)
 
@@ -105,14 +108,15 @@ const Main = (props) => {
 
                 const result = JSON.stringify(String.fromCharCode(...asciiCode))
 
-                console.log(result, '@@@@')
                 const convertData = jsonParser(result)
                 const fastenedState = !isEmpty(result)
                     ? sensorDataParser(convertData)
                     : '-'
-
+                console.log(fastenedState, 'fastenedState')
                 if (bufferRef.current[convertData.name]) {
                     bufferRef.current[convertData.name].status = fastenedState
+                } else {
+                    new Error('not found fastenedState Object')
                 }
             },
         )
@@ -147,19 +151,25 @@ const Main = (props) => {
                     service,
                     characteristic,
                 )
-
-                if (bufferRef.current[list.sensorName]) {
-                    bufferRef.current[list.sensorName] = Object.assign(
-                        {},
-                        list,
-                        { status: 'scan' },
-                    )
-                } else {
-                    const name = list.sensorName
-                    bufferRef.current = {
-                        [name]: Object.assign({}, list, { status: 'scan' }),
-                    }
-                }
+                const newSensor = Object.assign({}, list, {
+                    status: 'scan',
+                })
+                bufferRef.current[list.sensorName] = newSensor
+                // if (bufferRef.current[list.sensorName]) {
+                //     bufferRef.current[list.sensorName] = Object.assign(
+                //         {},
+                //         list,
+                //         { status: 'scan' },
+                //     )
+                // } else {
+                //     const newSensor = Object.assign({}, list, {
+                //         status: 'scan',
+                //     })
+                //     bufferRef.current[list.sensorName] = Object.assign(
+                //         bufferRef.current,
+                //         newSensor,
+                //     )
+                // }
             }
         }
         return list
@@ -265,6 +275,7 @@ const Main = (props) => {
         //     fetchVersionData(server)
         // }
         // setList(storeScanList)
+        console.log('useEffect StoreScanList', storeScanList)
         debounceOnConnectAndPrepare(storeScanList)
     }, [storeScanList])
 
@@ -291,6 +302,8 @@ const Main = (props) => {
     }, [deleteList])
 
     console.log('sensor', localSensorList)
+    console.log('sensor2', bufferRef.current)
+
     return (
         <>
             {/*<Spinner*/}
@@ -307,9 +320,7 @@ const Main = (props) => {
                 ) : null}
                 <SSensorListContainerView>
                     <SensorList
-                        list={Object.keys(localSensorList).map(
-                            (list) => localSensorList[list],
-                        )}
+                        list={localSensorList}
                         deleteMode={deleteMode}
                         setDeleteList={setDeleteList}
                     />
