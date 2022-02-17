@@ -112,12 +112,12 @@ const Main = (props) => {
                 const fastenedState = !isEmpty(result)
                     ? sensorDataParser(convertData)
                     : '-'
-                console.log(fastenedState, 'fastenedState')
-                if (bufferRef.current[convertData.name]) {
-                    bufferRef.current[convertData.name].status = fastenedState
-                } else {
-                    new Error('not found fastenedState Object')
-                }
+                console.log(convertData, 'convertData')
+                // if (bufferRef.current[convertData.name]) {
+                //     bufferRef.current[convertData.name].status = fastenedState
+                // } else {
+                //     new Error('not found fastenedState Object')
+                // }
             },
         )
     }, [])
@@ -145,31 +145,33 @@ const Main = (props) => {
                 'Notify',
             )
             const writeProperties = checkNotifyProperties(info, 'Write')
+
             if (status === 200) {
                 await BleManager.startNotification(
                     uuid,
                     service,
                     characteristic,
                 )
+                setInterval(()=>{
+                    BleManager.write(
+                        uuid,
+                        writeProperties.service,
+                        writeProperties.characteristic,
+                        [104, 101, 97, 108, 116, 104],
+                    )
+                        .then(() => {
+                            // Success code
+                            // console.log('WriteSuccess')
+                        })
+                        .catch((error) => {
+                            // Failure code
+                            console.log(error)
+                        })
+                },3000)
                 const newSensor = Object.assign({}, list, {
                     status: 'scan',
                 })
                 bufferRef.current[list.sensorName] = newSensor
-                // if (bufferRef.current[list.sensorName]) {
-                //     bufferRef.current[list.sensorName] = Object.assign(
-                //         {},
-                //         list,
-                //         { status: 'scan' },
-                //     )
-                // } else {
-                //     const newSensor = Object.assign({}, list, {
-                //         status: 'scan',
-                //     })
-                //     bufferRef.current[list.sensorName] = Object.assign(
-                //         bufferRef.current,
-                //         newSensor,
-                //     )
-                // }
             }
         }
         return list
@@ -216,6 +218,7 @@ const Main = (props) => {
                 onConnectAndPrepare(list)
                     .then(() => {
                         console.log('Connecttion Success')
+
                         // SuccessAlert()
                         // if (timeoutCount > 1) {
                         //     setTimeoutCount(0)
@@ -300,9 +303,6 @@ const Main = (props) => {
             debounceOnConnectClear(deleteList)
         }
     }, [deleteList])
-
-    console.log('sensor', localSensorList)
-    console.log('sensor2', bufferRef.current)
 
     return (
         <>
