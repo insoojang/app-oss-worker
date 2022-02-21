@@ -29,6 +29,7 @@
         "on": "연결됨",
         "off": "연결 안됨",
         "connecting": "연결 중",
+        "connect-success": "연결완료",
         "normal-connection": "안전 체결",
         "abnormal-connection": "역방향 체결",
         "not-fastened": "체결 안됨",
@@ -71,6 +72,7 @@
         "sensor": "센서",
         "more": "더보기",
         "sensor-list": "센서 목록",
+        "sensor-log": "센서 로그",
         "app-version": "앱 버전",
         "my-info": "내정보",
         "name" : "이름",
@@ -88,6 +90,7 @@
     },
     "alarm": {
         "bluetooth-off": "블루투스가 OFF 상태입니다.",
-        "no-sensor": "연결된 센서가 없습니다."
+        "no-sensor": "연결된 센서가 없습니다.",
+        "no-log": "로그가 존재하지 않습니다."
     }
 }

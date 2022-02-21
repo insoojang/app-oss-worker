@@ -39,13 +39,13 @@ const MainNavigation = () => {
 
     return (
         <MainStack.Navigator>
-            {/*<MainStack.Screen*/}
-            {/*    name={SCREEN.LoginTab}*/}
-            {/*    component={LoginTab}*/}
-            {/*    options={{*/}
-            {/*        headerShown: false,*/}
-            {/*    }}*/}
-            {/*/>*/}
+            <MainStack.Screen
+                name={SCREEN.LoginTab}
+                component={LoginTab}
+                options={{
+                    headerShown: false,
+                }}
+            />
             <MainStack.Screen
                 name={SCREEN.MainTab}
                 component={MainTab}
@@ -141,7 +141,7 @@ const BottomTabNavigation = () => {
                     tabBarIcon: () => <Icon name="qrcode-scan" size={20} />,
                 }}
             />
-            <BottomTabStack.Screen
+            {/* <BottomTabStack.Screen
                 name={SCREEN.NFC}
                 component={NFCComponent}
                 options={{
@@ -160,7 +160,7 @@ const BottomTabNavigation = () => {
                     },
                     tabBarIcon: () => <Icon name="cellphone-nfc" size={20} />,
                 }}
-            />
+            />*/}
         </BottomTabStack.Navigator>
     )
 }

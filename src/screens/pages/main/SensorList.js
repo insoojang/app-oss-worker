@@ -19,7 +19,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useSelector, useDispatch } from 'react-redux'
 import { setScanListAction } from '../../../redux/reducers'
 
-const SensorList = ({ list = [], deleteMode = false, setDeleteList, test }) => {
+const SensorList = ({ list = [], deleteMode = false, setDeleteList }) => {
     const [listOpen, setListOpen] = useState(false)
     const [listState, setListState] = useState([])
     const { storeScanList } = useSelector((state) => state)
@@ -96,19 +96,11 @@ const SensorList = ({ list = [], deleteMode = false, setDeleteList, test }) => {
                 {item?.status === 'error' || deleteMode ? (
                     <TouchableOpacity
                         onPress={() => {
-                            if (deleteMode) {
-                                const filterItem = storeScanList.filter(
-                                    (list) => list.uuid !== item.uuid,
-                                )
-                                dispatch(setScanListAction(filterItem))
-                                setDeleteList(item)
-                            } else {
-                                const filterItem = storeScanList.filter(
-                                    (list) => list.uuid !== item.uuid,
-                                )
-                                console.log('filterItem', filterItem)
-                                dispatch(setScanListAction(filterItem))
-                            }
+                            const filterItem = storeScanList.filter(
+                                (list) => list.uuid !== item.uuid,
+                            )
+                            dispatch(setScanListAction(filterItem))
+                            setDeleteList(item)
                         }}
                         style={{ marginHorizontal: 15 }}
                         hitSlop={{

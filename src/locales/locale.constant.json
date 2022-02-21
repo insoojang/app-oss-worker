@@ -29,6 +29,7 @@
         "on": "connect",
         "off": "disconnect",
         "connecting": "Connecting",
+        "connect-success": "Success",
         "normal-connection": "Normal Connection",
         "abnormal-connection": "[Warning]: Abnormal connection",
         "not-fastened": "Not Fastened",
@@ -71,6 +72,7 @@
         "sensor": "Sensor",
         "more": "More",
         "sensor-list": "Sensor List",
+        "sensor-log": "Sensor Log",
         "app-version": "App Version",
         "my-info": "My Info",
         "name" : "Name",
@@ -88,6 +90,7 @@
     },
     "alarm": {
         "bluetooth-off": "Bluetooth is OFF.",
-        "no-sensor": "No sensor connected."
+        "no-sensor": "No sensor connected.",
+        "no-log": "No Log."
     }
 }

@@ -45,6 +45,8 @@ export const sensorStatusTitle = (value) => {
             return i18nt('sensor.foreign-object')
         case value === 'scan':
             return i18nt('sensor.connecting')
+        case value === 'success':
+            return i18nt('sensor.connect-success')
         case value === 'error':
             return i18nt('sensor.error')
         default:
@@ -100,6 +102,13 @@ export const typeOfFastened = (value) => {
                 color: 'rgb(245, 161, 77)',
                 borderColor: 'rgba(245, 161, 77, 0.2)',
                 backgroundColor: 'rgba(245, 161, 77, 0.1)',
+            }
+        case value === 'success':
+            return {
+                icon: 'check-circle-outline',
+                color: 'rgb(42 ,200, 63)',
+                borderColor: 'rgba(42 ,200, 63, 0.2)',
+                backgroundColor: 'rgba(42 ,200, 63, 0.1)',
             }
         default:
             return defaultTypeOfFastened

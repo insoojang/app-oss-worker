@@ -27,4 +27,7 @@ const sensorTitleParser = (value) => {
         throw e
     }
 }
-export { jsonParser, sensorDataParser, sensorTitleParser }
+
+const sensorUuidParser = (data) => data.replace(/(.{2})/g, '$1:').slice(0, -1)
+
+export { jsonParser, sensorDataParser, sensorTitleParser, sensorUuidParser }
